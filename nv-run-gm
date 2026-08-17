@@ -15,8 +15,14 @@ sudo systemctl start intel-noturbo.service
 sudo systemctl start omen-maxfan.service
 sudo systemctl start nvidia-limits.service
 
+# Activate GameMode
+dbus-send --session --dest=com.feralinteractive.GameMode --type=method_call /com/feralinteractive/GameMode com.feralinteractive.GameMode.RegisterGame int32:$$ >/dev/null 2>&1
+
 # Execute script when a game launches
-gamemoderun "$@"
+"$@"
+
+# Deactivate GameMode
+dbus-send --session --dest=com.feralinteractive.GameMode --type=method_call /com/feralinteractive/GameMode com.feralinteractive.GameMode.UnregisterGame int32:$$ >/dev/null 2>&1
 
 # Revert to previous state
 sudo systemctl stop omen-maxfan.service

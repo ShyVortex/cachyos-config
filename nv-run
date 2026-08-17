@@ -14,8 +14,14 @@ export SDL_VIDEO_DRIVER=x11 # SDL3
 sudo nvidia-smi -lgc 210,1600
 sudo nvidia-smi -lmc 810,6001
 
+# Activate GameMode
+dbus-send --session --dest=com.feralinteractive.GameMode --type=method_call /com/feralinteractive/GameMode com.feralinteractive.GameMode.RegisterGame int32:$$ >/dev/null 2>&1
+
 # Execute script when a game launches
-gamemoderun "$@"
+"$@"
+
+# Deactivate GameMode
+dbus-send --session --dest=com.feralinteractive.GameMode --type=method_call /com/feralinteractive/GameMode com.feralinteractive.GameMode.UnregisterGame int32:$$ >/dev/null 2>&1
 
 # Reset NVIDIA Performance Level when closing the game (default: false)
 # sudo nvidia-smi -rgc
