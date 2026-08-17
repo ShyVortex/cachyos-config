@@ -9,8 +9,15 @@
 
 The 'gamemode' package is also required. You can install it via:
 ```bash
-sudo pacman -S gamemode
+sudo pacman -S gamemode lib32-gamemode
 ```
+
+Add your user to the gamemode user group, then reboot:
+```bash
+sudo usermod -aG gamemode $USER
+```
+
+## How To
 
 This guide explains how to properly configure the **Gaming Mode (Gamescope)** on CachyOS (Deckify) for laptops equipped with NVIDIA Optimus hybrid graphics (Intel iGPU + NVIDIA dGPU), solving two common issues:
 1. A black screen when launching Gaming Mode without an external monitor connected (caused by Gamescope trying to hook into the NVIDIA GPU).
