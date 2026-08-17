@@ -16,7 +16,7 @@ sudo systemctl start omen-maxfan.service
 sudo systemctl start nvidia-limits.service
 
 # Execute script when a game launches
-"$@"
+gamemoderun "$@"
 
 # Revert to previous state
 sudo systemctl stop omen-maxfan.service

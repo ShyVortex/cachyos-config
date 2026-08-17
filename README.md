@@ -4,7 +4,13 @@
 > 
 > These files are the result of a **strictly personal configuration** tailored to a specific hardware setup (HP Omen). They **may not work on other devices** out of the box. Proceed with caution and adapt the system paths (especially in the fan control service) to your specific hardware if necessary.
 > 
-> **Dependency:** The `nv-run-gm` script requires the `intel-noturbo` service to manage CPU temperatures. You must install it from here before proceeding: [https://github.com/ShyVortex/intel-noturbo](https://github.com/ShyVortex/intel-noturbo).
+
+**Dependency:** The `nv-run-gm` script requires the `intel-noturbo` service to manage CPU temperatures. You must install it from here before proceeding: [https://github.com/ShyVortex/intel-noturbo](https://github.com/ShyVortex/intel-noturbo).  
+
+The 'gamemode' package is also required. You can install it via:
+```bash
+sudo pacman -S gamemode
+```
 
 This guide explains how to properly configure the **Gaming Mode (Gamescope)** on CachyOS (Deckify) for laptops equipped with NVIDIA Optimus hybrid graphics (Intel iGPU + NVIDIA dGPU), solving two common issues:
 1. A black screen when launching Gaming Mode without an external monitor connected (caused by Gamescope trying to hook into the NVIDIA GPU).
