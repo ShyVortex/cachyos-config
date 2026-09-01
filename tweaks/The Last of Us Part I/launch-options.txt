@@ -1,0 +1,1 @@
+WINEDLLOVERRIDES="amd_ags_x64=b" VKD3D_CONFIG=descriptor_heap PROTON_HIDE_NVIDIA_GPU=1 PROTON_DISABLE_NVAPI=1 nv-run-gm %command%
