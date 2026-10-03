@@ -1,0 +1,8 @@
+#
+# This file is parsed by pam_env module
+#
+# Syntax: simple "KEY=VAL" pairs on separate lines
+#
+
+STEAM_FORCE_DESKTOPUI_SCALING=1.5
+NVPRESENT_ENABLE_SMOOTH_MOTION=1
