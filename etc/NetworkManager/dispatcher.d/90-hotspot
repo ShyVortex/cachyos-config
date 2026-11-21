@@ -1,0 +1,17 @@
+#!/bin/sh
+[ "$1" = "wlan0" ] && [ "$2" = "up" ] || exit 0
+
+iptables -C DOCKER-USER -i wlan0 -o eno1 -j ACCEPT 2>/dev/null || \
+  iptables -I DOCKER-USER -i wlan0 -o eno1 -j ACCEPT
+iptables -C DOCKER-USER -i eno1 -o wlan0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null || \
+  iptables -I DOCKER-USER -i eno1 -o wlan0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+nft list table inet ttlfix >/dev/null 2>&1 || nft -f - <<'EOF'
+table inet ttlfix {
+  chain post {
+    type filter hook postrouting priority mangle;
+    ip ttl set 64
+    ip6 hoplimit set 64
+  }
+}
+EOF
