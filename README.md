@@ -95,6 +95,34 @@ Go to the game's **Properties** -> **General** and scroll down to the **Launch O
 * **For Desktop Mode (NVIDIA only):** Enter `nv-run %command%` (assuming you are manually managing your fans via GUI).
 * **For Battery Saving (Intel iGPU):** Leave the launch options empty. The game will automatically start on the integrated Intel GPU without triggering the dedicated graphics or loud fans.
 
+## Step 5: Unlock the Hotspot for Other Devices when Docker Is Installed
+
+If Docker is installed, its `DOCKER-USER` iptables chain and its default `FORWARD` policy can silently block the traffic of devices connected to your Wi-Fi hotspot (phone, tablet, console, etc.): the clients associate with the hotspot but get no internet access.
+
+This repository provides a NetworkManager dispatcher script that, every time the Wi-Fi interface comes up, inserts the missing forwarding rules in the `DOCKER-USER` chain and sets the TTL/hop limit to `64` on outgoing traffic (which also avoids tethering detection by some carriers).
+
+1. Copy the dispatcher script to the NetworkManager dispatcher directory:
+   ```bash
+   sudo cp etc/NetworkManager/dispatcher.d/90-hotspot /etc/NetworkManager/dispatcher.d/
+   ```
+2. Make it executable and owned by root (NetworkManager ignores non-executable dispatcher scripts):
+   ```bash
+   sudo chown root:root /etc/NetworkManager/dispatcher.d/90-hotspot
+   sudo chmod +x /etc/NetworkManager/dispatcher.d/90-hotspot
+   ```
+3. Restart NetworkManager (or simply toggle the hotspot off and on) so the script runs:
+   ```bash
+   sudo systemctl restart NetworkManager
+   ```
+
+> **Note:** The script assumes the hotspot interface is `wlan0` and the upstream connection is `eno1`. Edit the interface names in `/etc/NetworkManager/dispatcher.d/90-hotspot` to match your hardware (`ip link` shows the available interfaces) before copying it, otherwise the rules will never match.
+
+To verify that the rules were applied:
+```bash
+sudo iptables -S DOCKER-USER
+sudo nft list table inet ttlfix
+```
+
 ---
 
 *Note: This guide assumes that your hardware manager (e.g., envycontrol or supergfxctl) is set to **Hybrid** mode.*
