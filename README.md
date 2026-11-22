@@ -123,6 +123,26 @@ sudo iptables -S DOCKER-USER
 sudo nft list table inet ttlfix
 ```
 
+## Step 6: Fix Audio from a USB HDMI Capture Card (UGREEN)
+
+When using an HDMI capture card to play a console on the laptop, Linux can detect the card as an audio input but deliver **silence**. On the UGREEN 15390, the ALSA capture switch `Digital In` is disabled by default (Windows enables it automatically).
+
+The `scripts/setup-ugreen-audio.sh` script installs a udev rule that turns the capture switch on every time the card is plugged in, so no manual `amixer` command is needed after a reboot or a reconnection.
+
+**Dependency:** The script requires `alsa-utils` (which provides `amixer`). Install it with:
+```bash
+sudo pacman -S alsa-utils
+```
+
+1. Run the script with root privileges from the repository directory:
+   ```bash
+   sudo bash scripts/setup-ugreen-audio.sh
+   ```
+2. If the card is already connected, the script enables `Digital In` immediately; otherwise the rule applies the next time you plug the card in.
+3. If an application was already using the capture card, restart it so it picks up the new audio source.
+
+> **Note:** For a different capture card, run `arecord -l` to find its ALSA id (the name after `card N:`) and `amixer -c N` to list its capture controls, then edit the `CARD_ID` and `CONTROL` variables at the top of `scripts/setup-ugreen-audio.sh` before running it.
+
 ---
 
 *Note: This guide assumes that your hardware manager (e.g., envycontrol or supergfxctl) is set to **Hybrid** mode.*
