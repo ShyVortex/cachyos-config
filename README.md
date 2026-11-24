@@ -143,6 +143,29 @@ sudo pacman -S alsa-utils
 
 > **Note:** For a different capture card, run `arecord -l` to find its ALSA id (the name after `card N:`) and `amixer -c N` to list its capture controls, then edit the `CARD_ID` and `CONTROL` variables at the top of `scripts/setup-ugreen-audio.sh` before running it.
 
+## Step 7: Fix Random Audio Hitches (Intel 12th Gen, SOF Audio)
+
+On this laptop (i7-12700H, Intel SOF audio driver), audio can hitch or stutter every now and then, on the speakers and on Bluetooth headphones alike, while the logs show no error.
+
+PipeWire runs every output at the smallest buffer ("quantum") that any playing app asks for, and the default minimum is only 256 samples. As soon as one app requests low latency (a browser, an Electron app, a game, or a capture card's sound passthrough), every output drops to 5–10 ms buffers, which this hardware does not keep up with. Raising the minimum to 1024 samples (about 21 ms) fixes it. The same fix is reported for this CPU in [Bazzite issue #4283](https://github.com/ublue-os/bazzite/issues/4283).
+
+1. Copy the configuration file:
+   ```bash
+   mkdir -p ~/.config/pipewire/pipewire.conf.d
+   cp home/.config/pipewire/pipewire.conf.d/99-min-quantum.conf ~/.config/pipewire/pipewire.conf.d/
+   ```
+2. Restart PipeWire (or reboot):
+   ```bash
+   systemctl --user restart pipewire pipewire-pulse wireplumber
+   ```
+3. To check that it applied:
+   ```bash
+   pw-metadata -n settings | grep min-quantum
+   ```
+   It should show `1024`.
+
+> **Note:** To try the fix without installing anything, run `pw-metadata -n settings 0 clock.min-quantum 1024`. It lasts until PipeWire restarts. The trade-off is about 21 ms of minimum audio latency, which is not noticeable for media and games.
+
 ---
 
 *Note: This guide assumes that your hardware manager (e.g., envycontrol or supergfxctl) is set to **Hybrid** mode.*
